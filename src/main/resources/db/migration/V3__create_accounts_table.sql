@@ -18,7 +18,9 @@ CREATE TABLE accounts (
       (account_type = 'SYSTEM' AND user_id IS NULL AND code IS NOT NULL)
     ),
   CONSTRAINT account_balance_valid
-    CHECK (account_type = 'SYSTEM' OR balance >= 0)
+    CHECK (account_type = 'SYSTEM' OR balance >= 0),
+  CONSTRAINT account_code_valid
+    CHECK (code IS NULL OR code IN ('EXTERNAL'))
 );
 
 INSERT INTO accounts (id, account_type, code, currency)
