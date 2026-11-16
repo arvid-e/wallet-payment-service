@@ -88,6 +88,10 @@ public class Account {
     return balance;
   }
 
+  public void addBalance(Long amount) {
+    this.balance += amount;
+  }
+
   public Long getVersion() {
     return version;
   }

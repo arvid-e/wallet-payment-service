@@ -2,9 +2,9 @@ spring:
   application:
     name: wallet-payment-service
   datasource:
-    url: jdbc:postgresql://localhost:5432/wallet_db
-    username: wallet_user
-    password: wallet_pass
+    url: jdbc:postgresql://localhost:5432/mydb
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
   jpa:
     hibernate:
       ddl-auto: validate
