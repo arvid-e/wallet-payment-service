@@ -1,6 +1,9 @@
 package com.arvid.wallet.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import java.util.UUID;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -11,7 +14,11 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import com.arvid.wallet.TestcontainersConfig;
 import com.arvid.wallet.entity.Account;
+import com.arvid.wallet.entity.Transaction;
+import com.arvid.wallet.entity.TransactionStatus;
+import com.arvid.wallet.entity.TransactionType;
 import com.arvid.wallet.entity.User;
+import com.arvid.wallet.exception.AccountNotFoundException;
 import com.arvid.wallet.repository.AccountRepository;
 import com.arvid.wallet.repository.UserRepository;
 
@@ -49,11 +56,23 @@ public class DepositServiceIntegrationTest {
         Account account = accountRepo.findByUserIdAndCurrency(user.getId(), "JPY").orElseThrow();
 
         // Act
-        depositService.deposit(amount, account.getId(), idempotencyKey);
+        assertEquals(0, account.getBalance());
+        Transaction transaction = depositService.deposit(amount, account.getId(), idempotencyKey);
 
         // Assert
         Account updatedAccount = accountRepo.findById(account.getId()).orElseThrow();
         assertEquals(amount, updatedAccount.getBalance());
+        assertEquals(TransactionType.DEPOSIT, transaction.getTransactionType());
+        assertEquals(TransactionStatus.COMPLETED, transaction.getTransactionStatus());
     }
 
+    @Test 
+    public void throwsExceptionWhenAccountNotFound() {
+        // Arrange
+        long amount = 400;
+
+        // Act
+        // Assert
+        assertThrows(AccountNotFoundException.class, () -> depositService.deposit(amount, UUID.randomUUID(), "123"));
+    }
 }

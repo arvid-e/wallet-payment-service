@@ -9,6 +9,7 @@ import com.arvid.wallet.entity.Account;
 import com.arvid.wallet.entity.EntryType;
 import com.arvid.wallet.entity.LedgerEntry;
 import com.arvid.wallet.entity.Transaction;
+import com.arvid.wallet.entity.TransactionStatus;
 import com.arvid.wallet.entity.TransactionType;
 import com.arvid.wallet.exception.AccountNotFoundException;
 import com.arvid.wallet.repository.AccountRepository;
@@ -36,6 +37,7 @@ public class DepositService {
         .orElseThrow(() -> new AccountNotFoundException("Account not found"));
 
     Transaction transaction = new Transaction(TransactionType.DEPOSIT, account.getCurrency(), idempotencyKey, account.getUserId());
+    transaction.setTransactionStatus(TransactionStatus.COMPLETED);
     transactionRepo.save(transaction);
 
     LedgerEntry ledgerEntry = new LedgerEntry(transaction, EntryType.CREDIT, amount, accountId);
